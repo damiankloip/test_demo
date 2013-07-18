@@ -1,0 +1,7 @@
+name = Test demo
+description = test demo module and tests
+core = 7.x
+package = Demo
+
+files[] = tests/test_demo.test
+files[] = tests/test_demo.unit.test
