@@ -4,4 +4,14 @@
  * Web tests for test_demo module.
  */
 
+class TestDemoWebTest extends DrupalWebTestCase {
 
+  public static function getInfo() {
+    return array(
+      'name' => 'Test demo web test',
+      'description' => 'Web tests for the test_demo module',
+      'group' => 'Demo',
+    );
+  }
+
+}
