@@ -1,1 +1,49 @@
 <?php
+
+/**
+ * Unit tests for test_demo module.
+ */
+
+class TestDemoUnitTestCase extends DrupalUnitTestCase {
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Test demo unit tests',
+      'description' => 'Unit tests for the test_demo module',
+      'group' => 'Demo',
+    );
+  }
+
+  public function setUp() {
+    drupal_load('module', 'test_demo');
+    parent::setUp();
+  }
+
+  /**
+   * Test the test_demo_access_form build array.
+   */
+  public function testTestDemoAccessForm() {
+    $form_state = array();
+    $build = test_demo_access_form(array(), $form_state, 'yes');
+
+    # Sometime just checking that a key exists is what you need.
+    $this->assertTrue(array_key_exists('header', $build));
+    # Assert that 'Access: yes' is present in the header string.
+    $this->assertTrue(strpos($build['header']['#markup'], 'Access: yes'));
+    # Equivalent to '=='.
+    $this->assertEqual($build['test_form_element']['#default_value'], 123);
+    # Equivalent to '==='.
+    $this->assertIdentical($build['test_form_element']['#default_value'], 123);
+  }
+
+  /**
+   * Test the test_demo_access() function.
+   */
+  public function testTestDemoAccess() {
+    $this->assertTrue(test_demo_access('yes'));
+    $this->assertFalse(test_demo_access('no'));
+    $this->assertFalse(test_demo_access('invalid'));
+    $this->assertFalse(test_demo_access(NULL));
+  }
+
+}
