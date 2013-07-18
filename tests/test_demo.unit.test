@@ -26,7 +26,7 @@ class TestDemoUnitTestCase extends DrupalUnitTestCase {
     $form_state = array();
     $build = test_demo_access_form(array(), $form_state, 'yes');
 
-    # Sometime just checking that a key exists is what you need.
+    # Sometimes just checking that a key exists is what you need.
     $this->assertTrue(array_key_exists('header', $build));
     # Assert that 'Access: yes' is present in the header string.
     $this->assertTrue(strpos($build['header']['#markup'], 'Access: yes'));
@@ -40,6 +40,9 @@ class TestDemoUnitTestCase extends DrupalUnitTestCase {
    * Test the test_demo_access() function.
    */
   public function testTestDemoAccess() {
+    # We can just directly assert against the return value from the function,
+    # as it returns a boolean. This is easy to unit test as the function is self
+    # contained and doesn't rely on the environemnt/global variables.
     $this->assertTrue(test_demo_access('yes'));
     $this->assertFalse(test_demo_access('no'));
     $this->assertFalse(test_demo_access('invalid'));

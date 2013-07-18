@@ -13,7 +13,6 @@ function test_demo_menu() {
     'page arguments' => array('test_demo_access_form', 1),
     'access callback' => 'test_demo_access',
     'access arguments' => array(1),
-    'type' => MENU_CALLBACK,
   );
 
   return $items;
@@ -27,6 +26,12 @@ function test_demo_menu() {
 function test_demo_access_form($form, &$form_state, $access) {
   $form['header'] = array(
     '#markup' => '<h1 id="test-demo-title">' . format_string('Access: @access', array('@access' => $access)) . '</h1>',
+  );
+
+  $form['test_link'] = array(
+    '#type' => 'link',
+    '#title' => t('Test link'),
+    '#href' => url('user', array('absolute' => TRUE)),
   );
 
   $form['test_form_element'] = array(

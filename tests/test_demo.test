@@ -22,35 +22,55 @@ class TestDemoWebTest extends DrupalWebTestCase {
   /**
    * Tests the test_demo_access page/form.
    */
-  public function testTestDemAccessForm() {
-    # Should return OK.
+  public function testTestDemoAccessForm() {
+    // Should return OK.
     $this->drupalGet('test_demo_access/yes');
+    // It is always good to test the actual response code, as just a drupalGet
+    // could pass, returning valid HTML, but for an access denied page for example.
     $this->assertResponse(200);
 
-    # Assert text (as you would see in the browser).
+    // Text/markup.
+    // Assert text (as you would see in the browser).
     $this->assertText('Access: yes');
-    # Assert raw HTML output from the page.
+    // Assert raw HTML output from the page.
     $this->assertRaw('<h1 id="test-demo-title">Access: yes</h1>');
-    # Assert by using xpath queries.
+    // Assert by using xpath queries.
     $elements = $this->xpath('//h1[@id="test-demo-title"]');
     $this->assertEqual(count($elements), 1);
-    # Assert a form field by name attribute.
+
+    // Links.
+    // Assert by the link title.
+    $this->assertLink(t('Test link'));
+    // Assert by the href/destination of the link.
+    $this->assertLinkByHref(url('user', array('absolute' => TRUE)));
+    // You can click links.
+    $this->clickLink(t('Test link'));
+    // Your context should then shift to that page.
+    $this->assertEqual($this->getUrl(), url('user', array('absolute' => TRUE)), 'Redirected to user page.');
+
+    // Fields.
+    $this->drupalGet('test_demo_access/yes');
+    // Assert a form field by name attribute.
     $this->assertFieldByName('test_form_element', 123);
-    #Assert the same field with an xpath query.
+    // Assert the same field with an xpath query.
     $this->assertFieldByXpath('//input[@id="edit-test-form-element"]', 123);
 
-    # 'no' should return access denied.
+    // 'no' should return access denied.
     $this->drupalGet('test_demo_access/no');
     $this->assertResponse(403);
 
-    # Using an invalid argument should default to access denied.
+    // Using an invalid argument should default to access denied.
     $this->drupalGet('test_demo_access/hello');
     $this->assertResponse(403);
 
     // Test posting an invalid form.
+    // Edit is essentially an array of keys => values to mimic what will be found
+    // in the $_POST variable.
     $edit = array(
       'test_form_element' => '',
     );
+    // The 3rd argument is the label for the button you want to use to submit
+    // the form.
     $this->drupalPost('test_demo_access/yes', $edit, t('Save form'));
     $this->assertText('Test value field is required.', 'Form error text found.');
 
@@ -60,6 +80,7 @@ class TestDemoWebTest extends DrupalWebTestCase {
     );
     $this->drupalPost('test_demo_access/yes', $edit, t('Save form'));
     $this->assertText('Test value is 456.', 'Confirmation message found.');
+    // Assert that the form has redirected us to the user page.
     $this->assertEqual($this->getUrl(), url('user', array('absolute' => TRUE)), 'Redirected to user page.');
   }
 
