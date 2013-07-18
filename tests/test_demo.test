@@ -8,7 +8,7 @@ class TestDemoWebTest extends DrupalWebTestCase {
 
   public static function getInfo() {
     return array(
-      'name' => 'Test demo web test',
+      'name' => 'Test demo web tests',
       'description' => 'Web tests for the test_demo module',
       'group' => 'Demo',
     );
@@ -16,6 +16,51 @@ class TestDemoWebTest extends DrupalWebTestCase {
 
   public function setUp() {
     parent::setUp('test_demo');
+
+  }
+
+  /**
+   * Tests the test_demo_access page/form.
+   */
+  public function testTestDemAccessForm() {
+    # Should return OK.
+    $this->drupalGet('test_demo_access/yes');
+    $this->assertResponse(200);
+
+    # Assert text (as you would see in the browser).
+    $this->assertText('Access: yes');
+    # Assert raw HTML output from the page.
+    $this->assertRaw('<h1 id="test-demo-title">Access: yes</h1>');
+    # Assert by using xpath queries.
+    $elements = $this->xpath('//h1[@id="test-demo-title"]');
+    $this->assertEqual(count($elements), 1);
+    # Assert a form field by name attribute.
+    $this->assertFieldByName('test_form_element', 123);
+    #Assert the same field with an xpath query.
+    $this->assertFieldByXpath('//input[@id="edit-test-form-element"]', 123);
+
+    # 'no' should return access denied.
+    $this->drupalGet('test_demo_access/no');
+    $this->assertResponse(403);
+
+    # Using an invalid argument should default to access denied.
+    $this->drupalGet('test_demo_access/hello');
+    $this->assertResponse(403);
+
+    // Test posting an invalid form.
+    $edit = array(
+      'test_form_element' => '',
+    );
+    $this->drupalPost('test_demo_access/yes', $edit, t('Save form'));
+    $this->assertText('Test value field is required.', 'Form error text found.');
+
+    // Test posting a valid form.
+    $edit = array(
+      'test_form_element' => 456,
+    );
+    $this->drupalPost('test_demo_access/yes', $edit, t('Save form'));
+    $this->assertText('Test value is 456.', 'Confirmation message found.');
+    $this->assertEqual($this->getUrl(), url('user', array('absolute' => TRUE)), 'Redirected to user page.');
   }
 
 }
