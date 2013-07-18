@@ -1,1 +1,43 @@
 <?php
+
+/**
+ * Implements hook_menu().
+ */
+function test_demo_menu() {
+  $items = array();
+
+  $items['test_demo_access/%'] = array(
+    'name' => 'Test demo access',
+    'description' => 'Test callback for test_demo module',
+    'page_callback' => 'test_demo_access_page',
+    'page_arguments' => array(1),
+    'access callback' => 'test_demo_access',
+    'access arguments' => array(1),
+  );
+
+  return $items;
+}
+
+/**
+ * @param string $access
+ *
+ * @return string
+ */
+function test_demo_access_page($access) {
+  return '<h1>' . t('Access: @access', array('@access' => $access)) . '</h1>';
+}
+
+/**
+ * @param string $access
+ *
+ * @return bool
+ */
+function test_demo_access($access) {
+  switch ($access) {
+    case 'yes':
+      return TRUE;
+    case 'no':
+    default:
+      return FALSE;
+  }
+}
