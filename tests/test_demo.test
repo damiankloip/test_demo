@@ -14,4 +14,8 @@ class TestDemoWebTest extends DrupalWebTestCase {
     );
   }
 
+  public function setUp() {
+    parent::setUp('test_demo');
+  }
+
 }
