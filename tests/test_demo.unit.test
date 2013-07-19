@@ -56,6 +56,20 @@ class TestDemoUnitTestCase extends DrupalUnitTestCase {
     $dt = new DateTime();
 
     $this->assertTrue($dt instanceof DateTime);
+
+    try {
+      throw new Exception();
+    }
+    catch (Exception $e) {
+      $this->pass('The exception has been caught.');
+    }
+
+    try {
+      //throw new Exception();
+    }
+    catch (Exception $e) {
+      $this->fail('An exception was thrown.');
+    }
   }
 
 }
