@@ -6,6 +6,20 @@
 
 class TestDemoWebTest extends DrupalWebTestCase {
 
+  /**
+   * The new content type created for this test.
+   *
+   * @var stdClass
+   */
+  protected $newType;
+
+  /**
+   * An array of nodes used for this test clas.
+   *
+   * @var array
+   */
+  protected $nodes = array();
+
   public static function getInfo() {
     return array(
       'name' => 'Test demo web tests',
@@ -17,6 +31,11 @@ class TestDemoWebTest extends DrupalWebTestCase {
   public function setUp() {
     parent::setUp('test_demo');
 
+    $this->newType = $this->drupalCreateContentType(array('type' => 'my_new_type'));
+
+    for ($i = 0; $i < 5; $i++) {
+      $this->nodes[] = $this->drupalCreateNode(array('type' => $this->newType->type));
+    }
   }
 
   /**
