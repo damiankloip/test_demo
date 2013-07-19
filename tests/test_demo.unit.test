@@ -4,7 +4,7 @@
  * Unit tests for test_demo module.
  */
 
-class TestDemoUnitTestCase extends DrupalUnitTestCase {
+class TestDemoUnitTest extends DrupalUnitTestCase {
 
   public static function getInfo() {
     return array(
