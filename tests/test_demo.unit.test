@@ -49,4 +49,13 @@ class TestDemoUnitTestCase extends DrupalUnitTestCase {
     $this->assertFalse(test_demo_access(NULL));
   }
 
+  /**
+   * Some other assertions.
+   */
+  public function testOtherAssertions() {
+    $dt = new DateTime();
+
+    $this->assertTrue($dt instanceof DateTime);
+  }
+
 }

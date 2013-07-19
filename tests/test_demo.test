@@ -33,10 +33,10 @@ class TestDemoWebTest extends DrupalWebTestCase {
     // Assert text (as you would see in the browser).
     $this->assertText('Access: yes');
     // Assert raw HTML output from the page.
-    $this->assertRaw('<h1 id="test-demo-title">Access: yes</h1>');
+    $this->assertRaw('<h1 id="test-demo-title">Access: yes</h1>', 'Raw h1 title markup found.');
     // Assert by using xpath queries.
     $elements = $this->xpath('//h1[@id="test-demo-title"]');
-    $this->assertEqual(count($elements), 1);
+    $this->assertEqual(count($elements), 1, 'The title was found by xpath.');
 
     // Links.
     // Assert by the link title.
@@ -59,8 +59,8 @@ class TestDemoWebTest extends DrupalWebTestCase {
     $this->drupalGet('test_demo_access/no');
     $this->assertResponse(403);
 
-    // Using an invalid argument should default to access denied.
-    $this->drupalGet('test_demo_access/hello');
+    // Using an invalid/random argument should default to access denied.
+    $this->drupalGet('test_demo_access/' . $this->randomString());
     $this->assertResponse(403);
 
     // Test posting an invalid form.
@@ -72,16 +72,32 @@ class TestDemoWebTest extends DrupalWebTestCase {
     // The 3rd argument is the label for the button you want to use to submit
     // the form.
     $this->drupalPost('test_demo_access/yes', $edit, t('Save form'));
-    $this->assertText('Test value field is required.', 'Form error text found.');
+    $this->assertText(t('Test value field is required.'), 'Form error text found.');
 
     // Test posting a valid form.
+    // Use random names/strings instead of hard coding test strings.
+    $random_name = $this->randomName();
     $edit = array(
-      'test_form_element' => 456,
+      'test_form_element' => $random_name,
     );
     $this->drupalPost('test_demo_access/yes', $edit, t('Save form'));
-    $this->assertText('Test value is 456.', 'Confirmation message found.');
+    // Running only through format_string() and not t(), as the code we're testing
+    // uses format_string().
+    $this->assertText(format_string('Test value is @value.', array('@value' => $random_name)), 'Confirmation message found.');
     // Assert that the form has redirected us to the user page.
     $this->assertEqual($this->getUrl(), url('user', array('absolute' => TRUE)), 'Redirected to user page.');
+  }
+
+  /**
+   * Tests user login and visiting authenticated pages.
+   */
+  public function testUserLogin() {
+    // Pass in an array of permissions this user should have.
+    $this->someUser = $this->drupalCreateUser(array('bypass node access'));
+    $this->drupalLogin($this->someUser);
+
+    $this->drupalGet('node/add/page');
+    $this->assertResponse(200);
   }
 
 }
